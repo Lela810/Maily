@@ -15,38 +15,32 @@ const data = [
 
 const net = new brain.recurrent.LSTM();
 
-if (fs.existsSync('network_state.json')) {
-	const loadnetworkState = JSON.parse(
-		fs.readFileSync('network_state.json', 'utf-8')
-	);
-	net.fromJSON(loadnetworkState);
+const loadnetworkState = JSON.parse(
+	fs.readFileSync('network_state.json', 'utf-8')
+);
+net.fromJSON(loadnetworkState);
 
-	async () =>
-		net.train(data, {
-			iterations: 2000,
-			errorThresh: 0.005,
-			log: true,
-			logPeriod: 10,
-		});
-} else {
+let promise = new Promise((resolve, reject) => {
 	net.train(data, {
-		iterations: 2000,
+		iterations: 1000,
 		errorThresh: 0.005,
 		log: true,
 		logPeriod: 10,
 	});
-}
+});
 
-const savenetworkState = net.toJSON();
+/* const savenetworkState = net.toJSON();
 fs.writeFileSync(
 	'network_state.json',
 	JSON.stringify(savenetworkState),
 	'utf-8'
-);
+); */
 
 console.log(
 	net.run('SEPPmail Backup  Device ID ff50-5609-0100 Version 12.0.14')
 );
+
+await promise;
 
 /* const newData = [
 	{ input: [0, 0], output: [0] },
